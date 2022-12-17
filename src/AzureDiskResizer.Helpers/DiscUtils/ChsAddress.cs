@@ -21,94 +21,93 @@
 //
 using System.Diagnostics.CodeAnalysis;
 
-namespace AzureDiskResizer.Helpers.DiscUtils
+namespace AzureDiskResizer.Helpers.DiscUtils;
+
+/// <summary>
+/// Class whose instances represent a CHS (Cylinder, Head, Sector) address on a disk.
+/// </summary>
+/// <remarks>Instances of this class are immutable.</remarks>
+[ExcludeFromCodeCoverage]
+public sealed class ChsAddress
 {
     /// <summary>
-    /// Class whose instances represent a CHS (Cylinder, Head, Sector) address on a disk.
+    /// The address of the first sector on any disk.
     /// </summary>
-    /// <remarks>Instances of this class are immutable.</remarks>
-    [ExcludeFromCodeCoverage]
-    public sealed class ChsAddress
+    public static readonly ChsAddress First = new(0, 0, 1);
+
+    private readonly int _cylinder;
+    private readonly int _head;
+    private readonly int _sector;
+
+    /// <summary>
+    /// Initializes a new instance of the ChsAddress class.
+    /// </summary>
+    /// <param name="cylinder">The number of cylinders of the disk</param>
+    /// <param name="head">The number of heads (aka platters) of the disk</param>
+    /// <param name="sector">The number of sectors per track/cylinder of the disk</param>
+    public ChsAddress(int cylinder, int head, int sector)
     {
-        /// <summary>
-        /// The address of the first sector on any disk.
-        /// </summary>
-        public static readonly ChsAddress First = new(0, 0, 1);
+        _cylinder = cylinder;
+        _head = head;
+        _sector = sector;
+    }
 
-        private readonly int _cylinder;
-        private readonly int _head;
-        private readonly int _sector;
+    /// <summary>
+    /// Gets the cylinder number (zero-based).
+    /// </summary>
+    public int Cylinder
+    {
+        get { return _cylinder; }
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the ChsAddress class.
-        /// </summary>
-        /// <param name="cylinder">The number of cylinders of the disk</param>
-        /// <param name="head">The number of heads (aka platters) of the disk</param>
-        /// <param name="sector">The number of sectors per track/cylinder of the disk</param>
-        public ChsAddress(int cylinder, int head, int sector)
+    /// <summary>
+    /// Gets the head (zero-based).
+    /// </summary>
+    public int Head
+    {
+        get { return _head; }
+    }
+
+    /// <summary>
+    /// Gets the sector number (one-based).
+    /// </summary>
+    public int Sector
+    {
+        get { return _sector; }
+    }
+
+    /// <summary>
+    /// Determines if this object is equivalent to another.
+    /// </summary>
+    /// <param name="obj">The object to test against.</param>
+    /// <returns><c>true</c> if the <paramref name="obj"/> is equivalent, else <c>false</c>.</returns>
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || obj.GetType() != GetType())
         {
-            _cylinder = cylinder;
-            _head = head;
-            _sector = sector;
+            return false;
         }
 
-        /// <summary>
-        /// Gets the cylinder number (zero-based).
-        /// </summary>
-        public int Cylinder
-        {
-            get { return _cylinder; }
-        }
+        ChsAddress other = (ChsAddress)obj;
 
-        /// <summary>
-        /// Gets the head (zero-based).
-        /// </summary>
-        public int Head
-        {
-            get { return _head; }
-        }
+        return _cylinder == other._cylinder && _head == other._head && _sector == other._sector;
+    }
 
-        /// <summary>
-        /// Gets the sector number (one-based).
-        /// </summary>
-        public int Sector
-        {
-            get { return _sector; }
-        }
+    /// <summary>
+    /// Calculates the hash code for this object.
+    /// </summary>
+    /// <returns>The hash code.</returns>
+    public override int GetHashCode()
+    {
+        return _cylinder.GetHashCode() ^ _head.GetHashCode() ^ _sector.GetHashCode();
+    }
 
-        /// <summary>
-        /// Determines if this object is equivalent to another.
-        /// </summary>
-        /// <param name="obj">The object to test against.</param>
-        /// <returns><c>true</c> if the <paramref name="obj"/> is equivalent, else <c>false</c>.</returns>
-        public override bool Equals(object? obj)
-        {
-            if (obj == null || obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            ChsAddress other = (ChsAddress)obj;
-
-            return _cylinder == other._cylinder && _head == other._head && _sector == other._sector;
-        }
-
-        /// <summary>
-        /// Calculates the hash code for this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            return _cylinder.GetHashCode() ^ _head.GetHashCode() ^ _sector.GetHashCode();
-        }
-
-        /// <summary>
-        /// Gets a string representation of this object, in the form (C/H/S).
-        /// </summary>
-        /// <returns>The string representation</returns>
-        public override string ToString()
-        {
-            return "(" + _cylinder + "/" + _head + "/" + _sector + ")";
-        }
+    /// <summary>
+    /// Gets a string representation of this object, in the form (C/H/S).
+    /// </summary>
+    /// <returns>The string representation</returns>
+    public override string ToString()
+    {
+        return "(" + _cylinder + "/" + _head + "/" + _sector + ")";
     }
 }

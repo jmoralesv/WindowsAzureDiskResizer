@@ -5,16 +5,18 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF9CD825-82C3-4DCB-9230-D28264BA8BE6}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		..\..\.gitattributes = ..\..\.gitattributes
 		..\..\.gitignore = ..\..\.gitignore
+		..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
 		..\..\README.md = ..\..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDiskResizer", "AzureDiskResizer\AzureDiskResizer.csproj", "{08644ED3-C485-4096-8E1E-83F0983484DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDiskResizer", "AzureDiskResizer\AzureDiskResizer.csproj", "{08644ED3-C485-4096-8E1E-83F0983484DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDiskResizer.Helpers", "AzureDiskResizer.Helpers\AzureDiskResizer.Helpers.csproj", "{B9B25DDE-8584-42C9-9B10-9CD057B7CA1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDiskResizer.Helpers", "AzureDiskResizer.Helpers\AzureDiskResizer.Helpers.csproj", "{B9B25DDE-8584-42C9-9B10-9CD057B7CA1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDiskResizer.Tests", "AzureDiskResizer.Tests\AzureDiskResizer.Tests.csproj", "{7AD71CC8-84F0-4940-9D86-FAAFAF56FC2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDiskResizer.Tests", "AzureDiskResizer.Tests\AzureDiskResizer.Tests.csproj", "{7AD71CC8-84F0-4940-9D86-FAAFAF56FC2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

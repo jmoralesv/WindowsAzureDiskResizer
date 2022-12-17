@@ -21,15 +21,14 @@
 //
 using System.Diagnostics.CodeAnalysis;
 
-namespace AzureDiskResizer.Helpers.DiscUtils
-{
-    [ExcludeFromCodeCoverage]
-    internal static class Sizes
-    {
-        public const long OneKiB = 1024;
-        public const long OneMiB = 1024 * OneKiB;
-        public const long OneGiB = 1024 * OneMiB;
+namespace AzureDiskResizer.Helpers.DiscUtils;
 
-        public const int Sector = 512;
-    }
+[ExcludeFromCodeCoverage]
+internal static class Sizes
+{
+    public const long OneKiB = 1024;
+    public const long OneMiB = 1024 * OneKiB;
+    public const long OneGiB = 1024 * OneMiB;
+
+    public const int Sector = 512;
 }

@@ -22,170 +22,169 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AzureDiskResizer.Helpers.DiscUtils
+namespace AzureDiskResizer.Helpers.DiscUtils;
+
+[ExcludeFromCodeCoverage]
+public class Footer
 {
-    [ExcludeFromCodeCoverage]
-    public class Footer
+    public const string FileCookie = "conectix";
+    public const uint FeatureNone = 0x0;
+    public const uint FeatureTemporary = 0x1;
+    public const uint FeatureReservedMustBeSet = 0x2;
+    public const uint Version1 = 0x00010000;
+    public const uint Version6Point1 = 0x00060001;
+    public static readonly DateTime EpochUtc = new(2000, 1, 1, 0, 0, 0, 0);
+    public const string VirtualPCSig = "vpc ";
+    public const string VirtualServerSig = "vs  ";
+    public const uint VirtualPC2004Version = 0x00050000;
+    public const uint VirtualServer2004Version = 0x00010000;
+    public const string WindowsHostOS = "Wi2k";
+    public const string MacHostOS = "Mac ";
+    public const uint CylindersMask = 0x0000FFFF;
+    public const uint HeadsMask = 0x00FF0000;
+    public const uint SectorsMask = 0xFF000000;
+
+    public string Cookie = null!;
+    public uint Features;
+    public uint FileFormatVersion;
+    public long DataOffset;
+    public DateTime Timestamp;
+    public string CreatorApp = null!;
+    public uint CreatorVersion;
+    public string CreatorHostOS = null!;
+    public long OriginalSize;
+    public long CurrentSize;
+    public Geometry Geometry = null!;
+    public FileType DiskType;
+    public uint Checksum;
+    public Guid UniqueId;
+    public byte SavedState;
+
+    public Footer(Geometry geometry, long capacity, FileType type)
     {
-        public const string FileCookie = "conectix";
-        public const uint FeatureNone = 0x0;
-        public const uint FeatureTemporary = 0x1;
-        public const uint FeatureReservedMustBeSet = 0x2;
-        public const uint Version1 = 0x00010000;
-        public const uint Version6Point1 = 0x00060001;
-        public static readonly DateTime EpochUtc = new(2000, 1, 1, 0, 0, 0, 0);
-        public const string VirtualPCSig = "vpc ";
-        public const string VirtualServerSig = "vs  ";
-        public const uint VirtualPC2004Version = 0x00050000;
-        public const uint VirtualServer2004Version = 0x00010000;
-        public const string WindowsHostOS = "Wi2k";
-        public const string MacHostOS = "Mac ";
-        public const uint CylindersMask = 0x0000FFFF;
-        public const uint HeadsMask = 0x00FF0000;
-        public const uint SectorsMask = 0xFF000000;
+        Cookie = FileCookie;
+        Features = FeatureReservedMustBeSet;
+        FileFormatVersion = Version1;
+        DataOffset = -1;
+        Timestamp = DateTime.UtcNow;
+        CreatorApp = "dutl";
+        CreatorVersion = Version6Point1;
+        CreatorHostOS = WindowsHostOS;
+        OriginalSize = capacity;
+        CurrentSize = capacity;
+        Geometry = geometry;
+        DiskType = type;
+        UniqueId = Guid.NewGuid();
+        ////SavedState = 0;
+    }
 
-        public string Cookie = null!;
-        public uint Features;
-        public uint FileFormatVersion;
-        public long DataOffset;
-        public DateTime Timestamp;
-        public string CreatorApp = null!;
-        public uint CreatorVersion;
-        public string CreatorHostOS = null!;
-        public long OriginalSize;
-        public long CurrentSize;
-        public Geometry Geometry = null!;
-        public FileType DiskType;
-        public uint Checksum;
-        public Guid UniqueId;
-        public byte SavedState;
+    public Footer(Footer toCopy)
+    {
+        Cookie = toCopy.Cookie;
+        Features = toCopy.Features;
+        FileFormatVersion = toCopy.FileFormatVersion;
+        DataOffset = toCopy.DataOffset;
+        Timestamp = toCopy.Timestamp;
+        CreatorApp = toCopy.CreatorApp;
+        CreatorVersion = toCopy.CreatorVersion;
+        CreatorHostOS = toCopy.CreatorHostOS;
+        OriginalSize = toCopy.OriginalSize;
+        CurrentSize = toCopy.CurrentSize;
+        Geometry = toCopy.Geometry;
+        DiskType = toCopy.DiskType;
+        Checksum = toCopy.Checksum;
+        UniqueId = toCopy.UniqueId;
+        SavedState = toCopy.SavedState;
+    }
 
-        public Footer(Geometry geometry, long capacity, FileType type)
+    private Footer()
+    {
+    }
+
+    #region Marshalling
+    public static Footer FromBytes(byte[] buffer, int offset)
+    {
+        Footer result = new()
         {
-            Cookie = FileCookie;
-            Features = FeatureReservedMustBeSet;
-            FileFormatVersion = Version1;
-            DataOffset = -1;
-            Timestamp = DateTime.UtcNow;
-            CreatorApp = "dutl";
-            CreatorVersion = Version6Point1;
-            CreatorHostOS = WindowsHostOS;
-            OriginalSize = capacity;
-            CurrentSize = capacity;
-            Geometry = geometry;
-            DiskType = type;
-            UniqueId = Guid.NewGuid();
-            ////SavedState = 0;
+            Cookie = Utilities.BytesToString(buffer, offset + 0, 8),
+            Features = Utilities.ToUInt32BigEndian(buffer, offset + 8),
+            FileFormatVersion = Utilities.ToUInt32BigEndian(buffer, offset + 12),
+            DataOffset = Utilities.ToInt64BigEndian(buffer, offset + 16),
+            Timestamp = EpochUtc.AddSeconds(Utilities.ToUInt32BigEndian(buffer, offset + 24)),
+            CreatorApp = Utilities.BytesToString(buffer, offset + 28, 4),
+            CreatorVersion = Utilities.ToUInt32BigEndian(buffer, offset + 32),
+            CreatorHostOS = Utilities.BytesToString(buffer, offset + 36, 4),
+            OriginalSize = Utilities.ToInt64BigEndian(buffer, offset + 40),
+            CurrentSize = Utilities.ToInt64BigEndian(buffer, offset + 48),
+            Geometry = new Geometry(Utilities.ToUInt16BigEndian(buffer, offset + 56), buffer[58], buffer[59]),
+            DiskType = (FileType)Utilities.ToUInt32BigEndian(buffer, offset + 60),
+            Checksum = Utilities.ToUInt32BigEndian(buffer, offset + 64),
+            UniqueId = Utilities.ToGuidBigEndian(buffer, offset + 68),
+            SavedState = buffer[84]
+        };
+
+        return result;
+    }
+
+    public void ToBytes(byte[] buffer, int offset)
+    {
+        Utilities.StringToBytes(Cookie, buffer, offset + 0, 8);
+        Utilities.WriteBytesBigEndian(Features, buffer, offset + 8);
+        Utilities.WriteBytesBigEndian(FileFormatVersion, buffer, offset + 12);
+        Utilities.WriteBytesBigEndian(DataOffset, buffer, offset + 16);
+        Utilities.WriteBytesBigEndian((uint)(Timestamp - EpochUtc).TotalSeconds, buffer, offset + 24);
+        Utilities.StringToBytes(CreatorApp, buffer, offset + 28, 4);
+        Utilities.WriteBytesBigEndian(CreatorVersion, buffer, offset + 32);
+        Utilities.StringToBytes(CreatorHostOS, buffer, offset + 36, 4);
+        Utilities.WriteBytesBigEndian(OriginalSize, buffer, offset + 40);
+        Utilities.WriteBytesBigEndian(CurrentSize, buffer, offset + 48);
+        Utilities.WriteBytesBigEndian((ushort)Geometry.Cylinders, buffer, offset + 56);
+        buffer[offset + 58] = (byte)Geometry.HeadsPerCylinder;
+        buffer[offset + 59] = (byte)Geometry.SectorsPerTrack;
+        Utilities.WriteBytesBigEndian((uint)DiskType, buffer, offset + 60);
+        Utilities.WriteBytesBigEndian(Checksum, buffer, offset + 64);
+        Utilities.WriteBytesBigEndian(UniqueId, buffer, offset + 68);
+        buffer[84] = SavedState;
+        Array.Clear(buffer, 85, 427);
+    }
+    #endregion
+
+    public bool IsValid()
+    {
+        return (Cookie == FileCookie)
+               && IsChecksumValid()
+               ////&& ((Features & FeatureReservedMustBeSet) != 0)
+               && FileFormatVersion == Version1;
+    }
+
+    public bool IsChecksumValid()
+    {
+        return Checksum == CalculateChecksum();
+    }
+
+    public uint UpdateChecksum()
+    {
+        Checksum = CalculateChecksum();
+        return Checksum;
+    }
+
+    private uint CalculateChecksum()
+    {
+        Footer copy = new(this)
+        {
+            Checksum = 0
+        };
+
+        byte[] asBytes = new byte[512];
+        copy.ToBytes(asBytes, 0);
+        uint checksum = 0;
+        foreach (uint value in asBytes)
+        {
+            checksum += value;
         }
 
-        public Footer(Footer toCopy)
-        {
-            Cookie = toCopy.Cookie;
-            Features = toCopy.Features;
-            FileFormatVersion = toCopy.FileFormatVersion;
-            DataOffset = toCopy.DataOffset;
-            Timestamp = toCopy.Timestamp;
-            CreatorApp = toCopy.CreatorApp;
-            CreatorVersion = toCopy.CreatorVersion;
-            CreatorHostOS = toCopy.CreatorHostOS;
-            OriginalSize = toCopy.OriginalSize;
-            CurrentSize = toCopy.CurrentSize;
-            Geometry = toCopy.Geometry;
-            DiskType = toCopy.DiskType;
-            Checksum = toCopy.Checksum;
-            UniqueId = toCopy.UniqueId;
-            SavedState = toCopy.SavedState;
-        }
+        checksum = ~checksum;
 
-        private Footer()
-        {
-        }
-
-        #region Marshalling
-        public static Footer FromBytes(byte[] buffer, int offset)
-        {
-            Footer result = new()
-            {
-                Cookie = Utilities.BytesToString(buffer, offset + 0, 8),
-                Features = Utilities.ToUInt32BigEndian(buffer, offset + 8),
-                FileFormatVersion = Utilities.ToUInt32BigEndian(buffer, offset + 12),
-                DataOffset = Utilities.ToInt64BigEndian(buffer, offset + 16),
-                Timestamp = EpochUtc.AddSeconds(Utilities.ToUInt32BigEndian(buffer, offset + 24)),
-                CreatorApp = Utilities.BytesToString(buffer, offset + 28, 4),
-                CreatorVersion = Utilities.ToUInt32BigEndian(buffer, offset + 32),
-                CreatorHostOS = Utilities.BytesToString(buffer, offset + 36, 4),
-                OriginalSize = Utilities.ToInt64BigEndian(buffer, offset + 40),
-                CurrentSize = Utilities.ToInt64BigEndian(buffer, offset + 48),
-                Geometry = new Geometry(Utilities.ToUInt16BigEndian(buffer, offset + 56), buffer[58], buffer[59]),
-                DiskType = (FileType)Utilities.ToUInt32BigEndian(buffer, offset + 60),
-                Checksum = Utilities.ToUInt32BigEndian(buffer, offset + 64),
-                UniqueId = Utilities.ToGuidBigEndian(buffer, offset + 68),
-                SavedState = buffer[84]
-            };
-
-            return result;
-        }
-
-        public void ToBytes(byte[] buffer, int offset)
-        {
-            Utilities.StringToBytes(Cookie, buffer, offset + 0, 8);
-            Utilities.WriteBytesBigEndian(Features, buffer, offset + 8);
-            Utilities.WriteBytesBigEndian(FileFormatVersion, buffer, offset + 12);
-            Utilities.WriteBytesBigEndian(DataOffset, buffer, offset + 16);
-            Utilities.WriteBytesBigEndian((uint)(Timestamp - EpochUtc).TotalSeconds, buffer, offset + 24);
-            Utilities.StringToBytes(CreatorApp, buffer, offset + 28, 4);
-            Utilities.WriteBytesBigEndian(CreatorVersion, buffer, offset + 32);
-            Utilities.StringToBytes(CreatorHostOS, buffer, offset + 36, 4);
-            Utilities.WriteBytesBigEndian(OriginalSize, buffer, offset + 40);
-            Utilities.WriteBytesBigEndian(CurrentSize, buffer, offset + 48);
-            Utilities.WriteBytesBigEndian((ushort)Geometry.Cylinders, buffer, offset + 56);
-            buffer[offset + 58] = (byte)Geometry.HeadsPerCylinder;
-            buffer[offset + 59] = (byte)Geometry.SectorsPerTrack;
-            Utilities.WriteBytesBigEndian((uint)DiskType, buffer, offset + 60);
-            Utilities.WriteBytesBigEndian(Checksum, buffer, offset + 64);
-            Utilities.WriteBytesBigEndian(UniqueId, buffer, offset + 68);
-            buffer[84] = SavedState;
-            Array.Clear(buffer, 85, 427);
-        }
-        #endregion
-
-        public bool IsValid()
-        {
-            return (Cookie == FileCookie)
-                   && IsChecksumValid()
-                   ////&& ((Features & FeatureReservedMustBeSet) != 0)
-                   && FileFormatVersion == Version1;
-        }
-
-        public bool IsChecksumValid()
-        {
-            return Checksum == CalculateChecksum();
-        }
-
-        public uint UpdateChecksum()
-        {
-            Checksum = CalculateChecksum();
-            return Checksum;
-        }
-
-        private uint CalculateChecksum()
-        {
-            Footer copy = new(this)
-            {
-                Checksum = 0
-            };
-
-            byte[] asBytes = new byte[512];
-            copy.ToBytes(asBytes, 0);
-            uint checksum = 0;
-            foreach (uint value in asBytes)
-            {
-                checksum += value;
-            }
-
-            checksum = ~checksum;
-
-            return checksum;
-        }
+        return checksum;
     }
 }
