@@ -13,7 +13,7 @@ if (args.Length < 2)
 }
 
 // Parse arguments
-if (!int.TryParse(args[0], out int newSizeInGb) || (newSizeInGb * 1024 * 1024 * 1024) % 512 != 0)
+if (!int.TryParse(args[0], out var newSizeInGb) || (newSizeInGb * 1024 * 1024 * 1024) % 512 != 0)
 {
     Console.WriteLine("Argument size invalid. Please specify a valid disk size in GB (must be a whole number).");
     return -1;
@@ -41,7 +41,7 @@ else if (!blobUri.Query.Contains("sig="))
 if (newSizeInGb > 1023)
 {
     Console.WriteLine("The given disk size exceeds 1023 GB. Microsoft Azure will not be able to start the virtual machine stored on this disk if you continue.");
-    Console.WriteLine("See https://msdn.microsoft.com/en-us/library/azure/dn197896.aspx for more information.");
+    Console.WriteLine("See https://learn.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs for more information.");
     return -1;
 }
 
@@ -57,16 +57,17 @@ Console.WriteLine("Do you want to continue with shrinking the disk? (y/n)");
 while (true)
 {
     var consoleKey = Console.ReadKey().KeyChar;
-    if (consoleKey == 'n')
+    switch (consoleKey)
     {
-        Console.WriteLine("Aborted.");
-        return -1;
-    }
-    if (consoleKey == 'y')
-    {
-        resizeVhdHelper.IsExpand = false;
-        var finalResult = await resizeVhdHelper.DoResizeVhdBlobAsync();
-        return (int)finalResult;
+        case 'n':
+            Console.WriteLine("Aborted.");
+            return -1;
+        case 'y':
+        {
+            resizeVhdHelper.IsExpand = false;
+            var finalResult = await resizeVhdHelper.DoResizeVhdBlobAsync();
+            return (int)finalResult;
+        }
     }
 }
 

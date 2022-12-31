@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents the results the resize functionality can return.
 /// </summary>
-public enum ResizeResult : int
+public enum ResizeResult
 {
     /// <summary>
     /// Something was wrong.

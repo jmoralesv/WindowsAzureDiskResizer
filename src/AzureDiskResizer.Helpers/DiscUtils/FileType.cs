@@ -24,7 +24,7 @@ namespace AzureDiskResizer.Helpers.DiscUtils;
 /// <summary>
 /// The known types of VHD disks.
 /// </summary>
-public enum FileType : int
+public enum FileType
 {
     /// <summary>
     /// Unknown type.

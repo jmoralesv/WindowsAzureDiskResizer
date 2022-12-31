@@ -9,10 +9,10 @@ using System.Runtime.Versioning;
 namespace AzureDiskResizer.Tests.Helpers;
 
 /// <summary>
-/// This helper class has methods for handling VHD files. 
+/// This helper class has methods for handling VHD files.
 /// </summary>
 [SupportedOSPlatform("windows")]
-public class VhdHelper
+public static class VhdHelper
 {
     /// <summary>
     /// Creates local VHD files, using the parameters specified.

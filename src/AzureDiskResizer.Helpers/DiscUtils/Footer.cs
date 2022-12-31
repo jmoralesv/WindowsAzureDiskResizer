@@ -175,7 +175,7 @@ public class Footer
             Checksum = 0
         };
 
-        byte[] asBytes = new byte[512];
+        var asBytes = new byte[512];
         copy.ToBytes(asBytes, 0);
         uint checksum = 0;
         foreach (uint value in asBytes)

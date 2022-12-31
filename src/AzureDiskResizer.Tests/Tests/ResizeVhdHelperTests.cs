@@ -11,10 +11,10 @@ namespace AzureDiskResizer.Tests.Tests;
 /// </summary>
 public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
 {
-    private const string testDiskUri = "http://127.0.0.1:10000/devstoreaccount1/test-container/TestDisk0.vhd";
+    private const string TestDiskUri = "http://127.0.0.1:10000/devstoreaccount1/test-container/TestDisk0.vhd";
     private readonly AzureStorageEmulatorFixture _azureStorageEmulatorFixture;
-    private readonly string _accountName = null!;
-    private readonly string _accountKey = null!;
+    private readonly string _accountName;
+    private readonly string _accountKey;
 
     public ResizeVhdHelperTests(AzureStorageEmulatorFixture azureStorageEmulatorFixture)
     {
@@ -26,8 +26,8 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task Resize_Vhd_Blob_Not_Exists()
     {
-        var newSizeInGb = 1;
-        var blobUri = new Uri(testDiskUri);
+        const int newSizeInGb = 1;
+        var blobUri = new Uri(TestDiskUri);
         var resizeVhdHelper = new ResizeVhdHelper();
         var result = await resizeVhdHelper.ResizeVhdBlobAsync(newSizeInGb, blobUri, _accountName, _accountKey);
 
@@ -37,8 +37,8 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task Resize_Vhd_Blob_Not_Exists_And_Bytes_Are_The_Same()
     {
-        var newSizeInGb = 1;
-        var blobUri = new Uri(testDiskUri);
+        const int newSizeInGb = 1;
+        var blobUri = new Uri(TestDiskUri);
         var resizeVhdHelper = new ResizeVhdHelper();
         var result = await resizeVhdHelper.ResizeVhdBlobAsync(newSizeInGb, blobUri, _accountName, _accountKey);
 
@@ -49,7 +49,7 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task GetVhdSizeInContainer_Fail()
     {
-        var blobUri = new Uri(testDiskUri);
+        var blobUri = new Uri(TestDiskUri);
         var result = await AzureStorageEmulatorFixture.GetVhdSizeInContainerAsync(blobUri);
         Assert.Equal(0L, result);
     }
@@ -57,8 +57,8 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task Resize_Vhd_Blob_Empty_Account_Details()
     {
-        var newSizeInGb = 1;
-        var blobUri = new Uri(testDiskUri);
+        const int newSizeInGb = 1;
+        var blobUri = new Uri(TestDiskUri);
         var resizeVhdHelper = new ResizeVhdHelper();
         var result = await resizeVhdHelper.ResizeVhdBlobAsync(newSizeInGb, blobUri, null, null);
         Assert.Equal(ResizeResult.Error, result);
@@ -67,9 +67,9 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task Resize_Vhd_Blob_Dynamic_Disk()
     {
-        var newSizeInGb = 1;
-        var vhdFilePath = "TestDisk-Dynamic.vhd";
-        var containerName = "test-container";
+        const int newSizeInGb = 1;
+        const string vhdFilePath = "TestDisk-Dynamic.vhd";
+        const string containerName = "test-container";
 
         // First create the dynamic VHD file
         VhdHelper.CreateVhdDisk(true, newSizeInGb, vhdFilePath, "Testing Disk");
@@ -91,10 +91,10 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task Resize_Vhd_Blob_Shrink()
     {
-        var firstSizeInGb = 2;
-        var newSizeInGb = 1;
-        var vhdFilePath = "TestDisk-Shrink.vhd";
-        var containerName = "test-container";
+        const int firstSizeInGb = 2;
+        const int newSizeInGb = 1;
+        const string vhdFilePath = "TestDisk-Shrink.vhd";
+        const string containerName = "test-container";
 
         // First create the fixed VHD file
         VhdHelper.CreateVhdDisk(false, firstSizeInGb, vhdFilePath, "Testing Shrink Disk");
@@ -123,10 +123,10 @@ public class ResizeVhdHelperTests : IClassFixture<AzureStorageEmulatorFixture>
     [Fact]
     public async Task Resize_Vhd_Blob_Expand()
     {
-        var firstSizeInGb = 1;
-        var newSizeInGb = 2;
-        var vhdFilePath = "TestDisk-Expand.vhd";
-        var containerName = "test-container";
+        const int firstSizeInGb = 1;
+        const int newSizeInGb = 2;
+        const string vhdFilePath = "TestDisk-Expand.vhd";
+        const string containerName = "test-container";
 
         // First create the fixed VHD file
         VhdHelper.CreateVhdDisk(false, firstSizeInGb, vhdFilePath, "Testing Expand Disk");

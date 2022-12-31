@@ -7,7 +7,7 @@ namespace AzureDiskResizer.Tests.Fixtures;
 
 public class AzureStorageEmulatorFixture : IDisposable
 {
-    public static Uri ServiceUri => new("http://127.0.0.1:10000/devstoreaccount1");
+    private static Uri ServiceUri => new("http://127.0.0.1:10000/devstoreaccount1");
     public static string AccountName => "devstoreaccount1";
     public static string AccountKey => "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
 
@@ -23,7 +23,7 @@ public class AzureStorageEmulatorFixture : IDisposable
     {
         RunCleanup();
 
-        _process?.Kill();
+        _process.Kill();
 
         GC.SuppressFinalize(this);
     }
@@ -59,7 +59,7 @@ public class AzureStorageEmulatorFixture : IDisposable
         var fileName = Path.GetFileName(filePath);
         var blobClient = containerClient.GetPageBlobClient(fileName);
 
-        using FileStream source = new(filePath, FileMode.Open, FileAccess.Read);
+        await using FileStream source = new(filePath, FileMode.Open, FileAccess.Read);
 
         await blobClient.CreateIfNotExistsAsync(source.Length);
         await blobClient.UploadPagesAsync(source, 0);

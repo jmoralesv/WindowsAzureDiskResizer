@@ -51,7 +51,7 @@ internal static class Utilities
     {
         List<U> result = new();
 
-        foreach (T sVal in source)
+        foreach (var sVal in source)
         {
             result.Add(func(sVal));
         }
@@ -70,7 +70,7 @@ internal static class Utilities
     public static C Filter<C, T>(ICollection<T> source, Func<T, bool> predicate) where C : ICollection<T>, new()
     {
         C result = new();
-        foreach (T val in source)
+        foreach (var val in source)
         {
             if (predicate(val))
             {
@@ -85,8 +85,8 @@ internal static class Utilities
     #region Bit Twiddling
     public static bool IsAllZeros(byte[] buffer, int offset, int count)
     {
-        int end = offset + count;
-        for (int i = offset; i < end; ++i)
+        var end = offset + count;
+        for (var i = offset; i < end; ++i)
         {
             if (buffer[i] != 0)
             {
@@ -119,7 +119,7 @@ internal static class Utilities
             throw new ArgumentException("Cannot calculate log of Zero", nameof(val));
         }
 
-        int result = 0;
+        var result = 0;
         while ((val & 1) != 1)
         {
             val >>= 1;
@@ -143,7 +143,7 @@ internal static class Utilities
             throw new ArgumentException("Cannot calculate log of Zero", nameof(val));
         }
 
-        int result = 0;
+        var result = 0;
         while ((val & 1) != 1)
         {
             val >>= 1;
@@ -167,7 +167,7 @@ internal static class Utilities
             return false;
         }
 
-        for (int i = 0; i < a.Length; ++i)
+        for (var i = 0; i < a.Length; ++i)
         {
             if (a[i] != b[i])
             {
@@ -251,7 +251,7 @@ internal static class Utilities
 
     public static void WriteBytesLittleEndian(Guid val, byte[] buffer, int offset)
     {
-        byte[] le = val.ToByteArray();
+        var le = val.ToByteArray();
         Array.Copy(le, 0, buffer, offset, 16);
     }
 
@@ -298,7 +298,7 @@ internal static class Utilities
 
     public static void WriteBytesBigEndian(Guid val, byte[] buffer, int offset)
     {
-        byte[] le = val.ToByteArray();
+        var le = val.ToByteArray();
         WriteBytesBigEndian(ToUInt32LittleEndian(le, 0), buffer, offset + 0);
         WriteBytesBigEndian(ToUInt16LittleEndian(le, 4), buffer, offset + 4);
         WriteBytesBigEndian(ToUInt16LittleEndian(le, 6), buffer, offset + 6);
@@ -343,8 +343,8 @@ internal static class Utilities
 
     public static uint ToUInt32BigEndian(byte[] buffer, int offset)
     {
-        uint val = (uint)(((buffer[offset + 0] << 24) & 0xFF000000U) | ((buffer[offset + 1] << 16) & 0x00FF0000U)
-                          | ((buffer[offset + 2] << 8) & 0x0000FF00U) | ((buffer[offset + 3] << 0) & 0x000000FFU));
+        var val = (uint)(((buffer[offset + 0] << 24) & 0xFF000000U) | ((buffer[offset + 1] << 16) & 0x00FF0000U)
+                                                                    | ((buffer[offset + 2] << 8) & 0x0000FF00U) | ((buffer[offset + 3] << 0) & 0x000000FFU));
         return val;
     }
 
@@ -370,7 +370,7 @@ internal static class Utilities
 
     public static Guid ToGuidLittleEndian(byte[] buffer, int offset)
     {
-        byte[] temp = new byte[16];
+        var temp = new byte[16];
         Array.Copy(buffer, offset, temp, 0, 16);
         return new Guid(temp);
     }
@@ -393,7 +393,7 @@ internal static class Utilities
 
     public static byte[] ToByteArray(byte[] buffer, int offset, int length)
     {
-        byte[] result = new byte[length];
+        var result = new byte[length];
         Array.Copy(buffer, offset, result, 0, length);
         return result;
     }
@@ -410,9 +410,9 @@ internal static class Utilities
     /// this preserves those code points by removing the top 16 bits of each character.</remarks>
     public static void StringToBytes(string value, byte[] dest, int offset, int count)
     {
-        char[] chars = value.ToCharArray();
+        var chars = value.ToCharArray();
 
-        int i = 0;
+        var i = 0;
         while (i < chars.Length)
         {
             dest[i + offset] = (byte)chars[i];
@@ -437,9 +437,9 @@ internal static class Utilities
     /// this preserves those code points.</remarks>
     public static string BytesToString(byte[] data, int offset, int count)
     {
-        char[] result = new char[count];
+        var result = new char[count];
 
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
         {
             result[i] = (char)data[i + offset];
         }
@@ -458,11 +458,11 @@ internal static class Utilities
     /// this preserves those code points.</remarks>
     public static string BytesToZString(byte[] data, int offset, int count)
     {
-        char[] result = new char[count];
+        var result = new char[count];
 
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
         {
-            byte ch = data[i + offset];
+            var ch = data[i + offset];
             if (ch == 0)
             {
                 return new string(result, 0, i);
@@ -484,9 +484,9 @@ internal static class Utilities
     /// <returns>The directory part</returns>
     public static string GetDirectoryFromPath(string path)
     {
-        string trimmed = path.TrimEnd('\\');
+        var trimmed = path.TrimEnd('\\');
 
-        int index = trimmed.LastIndexOf('\\');
+        var index = trimmed.LastIndexOf('\\');
         if (index < 0)
         {
             return string.Empty; // No directory, just a file name
@@ -502,9 +502,9 @@ internal static class Utilities
     /// <returns>The file part of the path</returns>
     public static string GetFileFromPath(string path)
     {
-        string trimmed = path.Trim('\\');
+        var trimmed = path.Trim('\\');
 
-        int index = trimmed.LastIndexOf('\\');
+        var index = trimmed.LastIndexOf('\\');
         if (index < 0)
         {
             return trimmed; // No directory, just a file name
@@ -531,7 +531,7 @@ internal static class Utilities
         }
         else
         {
-            return a.TrimEnd('\\') + '\\' + b.TrimStart('\\');
+            return $"{a.TrimEnd('\\')}\\{b.TrimStart('\\')}";
         }
     }
 
@@ -554,7 +554,7 @@ internal static class Utilities
 
         pathElements.AddRange(relativePath.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries));
 
-        int pos = 1;
+        var pos = 1;
         while (pos < pathElements.Count)
         {
             if (pathElements[pos] == ".")
@@ -573,7 +573,7 @@ internal static class Utilities
             }
         }
 
-        string merged = string.Join(@"\", pathElements.ToArray());
+        var merged = string.Join(@"\", pathElements.ToArray());
         if (relativePath.EndsWith(@"\", StringComparison.Ordinal))
         {
             merged += @"\";
@@ -581,11 +581,11 @@ internal static class Utilities
 
         if (basePath.StartsWith(@"\\", StringComparison.Ordinal))
         {
-            merged = @"\\" + merged;
+            merged = $@"\\{merged}";
         }
         else if (basePath.StartsWith(@"\", StringComparison.Ordinal))
         {
-            merged = @"\" + merged;
+            merged = $@"\{merged}";
         }
 
         return merged;
@@ -614,7 +614,7 @@ internal static class Utilities
         }
 
         // Find first part of paths that don't match
-        int i = 0;
+        var i = 0;
         while (i < Math.Min(pathElements.Count - 1, basePathElements.Count))
         {
             if (pathElements[i].ToUpperInvariant() != basePathElements[i].ToUpperInvariant())
@@ -633,14 +633,14 @@ internal static class Utilities
         }
         else if (i < basePathElements.Count)
         {
-            for (int j = 0; j < basePathElements.Count - i; ++j)
+            for (var j = 0; j < basePathElements.Count - i; ++j)
             {
                 result.Append(@"..\");
             }
         }
 
         // For each remaining part of the path, add the path element
-        for (int j = i; j < pathElements.Count - 1; ++j)
+        for (var j = i; j < pathElements.Count - 1; ++j)
         {
             result.Append(pathElements[j]);
             result.Append('\\');
@@ -669,8 +669,8 @@ internal static class Utilities
     /// <returns>The number of bytes actually read.</returns>
     public static int ReadFully(Stream stream, byte[] buffer, int offset, int length)
     {
-        int totalRead = 0;
-        int numRead = stream.Read(buffer, offset, length);
+        var totalRead = 0;
+        var numRead = stream.Read(buffer, offset, length);
         while (numRead > 0)
         {
             totalRead += numRead;
@@ -693,14 +693,14 @@ internal static class Utilities
     /// <returns>The data read from the stream</returns>
     public static byte[] ReadFully(Stream stream, int count)
     {
-        byte[] buffer = new byte[count];
+        var buffer = new byte[count];
         if (ReadFully(stream, buffer, 0, count) == count)
         {
             return buffer;
         }
         else
         {
-            throw new IOException("Unable to complete read of " + count + " bytes");
+            throw new IOException($"Unable to complete read of {count} bytes");
         }
     }
 
@@ -715,8 +715,8 @@ internal static class Utilities
     /// <returns>The number of bytes actually read.</returns>
     public static int ReadFully(IBuffer buffer, long pos, byte[] data, int offset, int length)
     {
-        int totalRead = 0;
-        int numRead = buffer.Read(pos, data, offset, length);
+        var totalRead = 0;
+        var numRead = buffer.Read(pos, data, offset, length);
         while (numRead > 0)
         {
             totalRead += numRead;
@@ -740,14 +740,14 @@ internal static class Utilities
     /// <returns>The data read from the stream</returns>
     public static byte[] ReadFully(IBuffer buffer, long pos, int count)
     {
-        byte[] result = new byte[count];
+        var result = new byte[count];
         if (ReadFully(buffer, pos, result, 0, count) == count)
         {
             return result;
         }
         else
         {
-            throw new IOException("Unable to complete read of " + count + " bytes");
+            throw new IOException($"Unable to complete read of {count} bytes");
         }
     }
 
@@ -781,9 +781,9 @@ internal static class Utilities
     /// <remarks>Copying starts at the current stream positions</remarks>
     public static void PumpStreams(Stream source, Stream dest)
     {
-        byte[] buffer = new byte[64 * 1024];
+        var buffer = new byte[64 * 1024];
 
-        int numRead = source.Read(buffer, 0, buffer.Length);
+        var numRead = source.Read(buffer, 0, buffer.Length);
         while (numRead != 0)
         {
             dest.Write(buffer, 0, numRead);
@@ -819,7 +819,7 @@ internal static class Utilities
             return false;
         }
 
-        foreach (char ch in split[0])
+        foreach (var ch in split[0])
         {
             if (!Is8Dot3Char(ch))
             {
@@ -834,7 +834,7 @@ internal static class Utilities
                 return false;
             }
 
-            foreach (char ch in split[1])
+            foreach (var ch in split[1])
             {
                 if (!Is8Dot3Char(ch))
                 {
@@ -848,7 +848,7 @@ internal static class Utilities
 
     public static bool Is8Dot3Char(char ch)
     {
-        return (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || "_^$~!#%£-{}()@'`&".IndexOf(ch) != -1;
+        return (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || "_^$~!#%Â£-{}()@'`&".IndexOf(ch) != -1;
     }
 
     /// <summary>
@@ -867,13 +867,13 @@ internal static class Utilities
             pattern += ".";
         }
 
-        string query = "^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", "[^.]") + "$";
+        var query = $"^{Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", "[^.]")}$";
         return new Regex(query, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     }
 
     public static DateTime DateTimeFromUnix(uint fileTime)
     {
-        long ticks = fileTime * (long)10 * 1000 * 1000;
+        var ticks = fileTime * (long)10 * 1000 * 1000;
         return new DateTime(ticks + UnixEpoch.Ticks);
     }
 

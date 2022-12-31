@@ -174,9 +174,9 @@ public sealed class Geometry
     /// <returns>The geometry a BIOS using the 'Large' method for calculating disk geometry will indicate for the disk</returns>
     public static Geometry LargeBiosGeometry(Geometry ideGeometry)
     {
-        int cylinders = ideGeometry.Cylinders;
-        int heads = ideGeometry.HeadsPerCylinder;
-        int sectors = ideGeometry.SectorsPerTrack;
+        var cylinders = ideGeometry.Cylinders;
+        var heads = ideGeometry.HeadsPerCylinder;
+        var sectors = ideGeometry.SectorsPerTrack;
 
         while (cylinders > 1024 && heads <= 127)
         {
@@ -216,8 +216,8 @@ public sealed class Geometry
             heads = 255;
         }
 
-        int sectors = 63;
-        int cylinders = (int)Math.Min(1024, capacity / (sectors * (long)heads * Sizes.Sector));
+        var sectors = 63;
+        var cylinders = (int)Math.Min(1024, capacity / (sectors * (long)heads * Sizes.Sector));
         return new Geometry(cylinders, heads, sectors, Sizes.Sector);
     }
 
@@ -281,7 +281,7 @@ public sealed class Geometry
         else
         {
             sectorsPerTrack = 17;
-            int cylindersTimesHeads = totalSectors / sectorsPerTrack;
+            var cylindersTimesHeads = totalSectors / sectorsPerTrack;
             headsPerCylinder = (cylindersTimesHeads + 1023) / 1024;
 
             if (headsPerCylinder < 4)
@@ -369,10 +369,10 @@ public sealed class Geometry
             throw new ArgumentOutOfRangeException(nameof(logicalBlockAddress), logicalBlockAddress, "Logical Block Address is negative");
         }
 
-        int cylinder = (int)(logicalBlockAddress / (_headsPerCylinder * _sectorsPerTrack));
-        int temp = (int)(logicalBlockAddress % (_headsPerCylinder * _sectorsPerTrack));
-        int head = temp / _sectorsPerTrack;
-        int sector = (temp % _sectorsPerTrack) + 1;
+        var cylinder = (int)(logicalBlockAddress / (_headsPerCylinder * _sectorsPerTrack));
+        var temp = (int)(logicalBlockAddress % (_headsPerCylinder * _sectorsPerTrack));
+        var head = temp / _sectorsPerTrack;
+        var sector = (temp % _sectorsPerTrack) + 1;
 
         return new ChsAddress(cylinder, head, sector);
     }
@@ -438,7 +438,7 @@ public sealed class Geometry
             return false;
         }
 
-        Geometry other = (Geometry)obj;
+        var other = (Geometry)obj;
 
         return _cylinders == other._cylinders && _headsPerCylinder == other._headsPerCylinder
                && _sectorsPerTrack == other._sectorsPerTrack && _bytesPerSector == other._bytesPerSector;
@@ -462,11 +462,11 @@ public sealed class Geometry
     {
         if (_bytesPerSector == 512)
         {
-            return "(" + _cylinders + "/" + _headsPerCylinder + "/" + _sectorsPerTrack + ")";
+            return $"({_cylinders}/{_headsPerCylinder}/{_sectorsPerTrack})";
         }
         else
         {
-            return "(" + _cylinders + "/" + _headsPerCylinder + "/" + _sectorsPerTrack + ":" + _bytesPerSector + ")";
+            return $"({_cylinders}/{_headsPerCylinder}/{_sectorsPerTrack}:{_bytesPerSector})";
         }
     }
 }
