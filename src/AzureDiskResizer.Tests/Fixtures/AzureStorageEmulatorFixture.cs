@@ -119,13 +119,13 @@ public class AzureStorageEmulatorFixture : IDisposable
             return;
         }
 
-        var arguments = @"-l D:\Azurite -d D:\Azurite\debug.log";
+        var arguments = @"--location D:\Azurite --debug D:\Azurite\debug.log --skipApiVersionCheck";
         var azuritePath = @"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Azure Storage Emulator\Azurite.exe";
 
         if (!File.Exists(azuritePath))
         {
             azuritePath = "azurite.exe";
-            arguments = @"-l C:\Azurite -d C:\Azurite\debug.log";
+            arguments = @"--location C:\Azurite --debug C:\Azurite\debug.log --skipApiVersionCheck";
         }
 
         _process = new Process
