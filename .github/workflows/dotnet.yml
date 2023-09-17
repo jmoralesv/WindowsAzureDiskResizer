@@ -10,8 +10,8 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
+  build-azure-disk-resizer:
+    name: Build Azure Disk Resizer
     runs-on: windows-latest
     defaults:
       run:
